@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgis:
+    image: kartoza/postgis:latest
+    container_name: spatial_db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=gis
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster
+      - DATADIR:/var/lib/postgresql
+    ports:
+      - "45432:5432"
+    volumes:
+      - ./postgresql/storage/pgdata:/var/lib/postgresql
+      - ./postgresql/migrations/db_schema.sql:/docker-entrypoint-initdb.d/setup-db.sql
+
+  fastapi:
+    build: ./fastapi
+    container_name: spatial_api
+    restart: always
+    ports:
+      - "8123:8000"
+    volumes:
+      - ./data:/home/sample_data
+    depends_on:
+      - postgis
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=gis
+      - POSTGRES_HOST=postgis
+
+  tegola:
+    build: ./tegola
+    container_name: tile_server
+    restart: always
+    ports:
+      - "8086:8085"
+    volumes:
+      - ./tegola/config.toml:/tegola/config.toml
+      - ./tegola/storage/cache:/cache
+    depends_on:
+      - postgis
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=gis
+      - POSTGRES_PORT=5432
+      - TEGOLA_CACHE_PATH=/cache

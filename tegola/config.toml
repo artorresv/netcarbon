@@ -1,0 +1,29 @@
+[webserver]
+port = ":8085"
+
+[cache]
+type = "file"
+basepath = "${TEGOLA_CACHE_PATH}"
+
+[[providers]]
+name = "gis"
+type = "mvt_postgis"
+uri = "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgis:${POSTGRES_PORT}/${POSTGRES_DB}"
+srid = 3857
+
+    [[providers.layers]]
+    name = "plots"
+    sql = "SELECT id::int, ST_AsMVTGeom(st_transform(geom, 3857), !BBOX!) as geom FROM plots p WHERE st_transform(geom, 3857) && !BBOX!"
+    geometry_fieldname = "geom"
+    geometry_type = "polygon"
+    id_fieldname = "id"
+    srid = 3857
+
+[[maps]]
+name = "plots"
+tile_buffer = 0
+
+    [[maps.layers]]
+    provider_layer = "gis.plots"
+    min_zoom = 0
+    max_zoom = 16

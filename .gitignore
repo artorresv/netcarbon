@@ -1,0 +1,5 @@
+fastapi/app/env
+__pycache__
+.mypy_cache
+.vscode
+.DS_Store

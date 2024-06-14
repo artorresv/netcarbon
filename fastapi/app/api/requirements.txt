@@ -1,0 +1,18 @@
+python-dotenv
+rasterio
+numpy >= 1.22.0
+pyproj
+flake8
+mypy
+mypy-extensions
+sat-search
+fastapi
+uvicorn[standard]
+shapely
+pystac-client
+types-requests
+databases[asyncpg]
+types-python-dateutil
+xarray
+rioxarray
+stackstac
