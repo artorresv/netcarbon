@@ -1,6 +1,6 @@
 # Description
 
-Demonstration of a basic system for collecting, storing, processing and providing access to spectral index data and derived products.
+Demonstration of a basic system for collecting, storing, processing and providing access to spectral indices data and derived products.
 
 The system is composed by:
 
